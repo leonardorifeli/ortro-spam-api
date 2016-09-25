@@ -23,7 +23,7 @@ class CredentialService {
         return $this->getGoogleClient()->createAuthUrl();
     }
 
-    public function createCredential($authCode)
+    public function createCredential($authCode, $email)
     {
         if(!$authCode) throw new \Exception("Invalid auth code." 401);
 

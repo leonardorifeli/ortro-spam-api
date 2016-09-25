@@ -44,8 +44,8 @@ class ClientService {
 
     private function reloadAccessToken()
     {
-        $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-        file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+        $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
+        file_put_contents($credentialsPath, json_encode($this->getGoogleClient()->getAccessToken()));
 
         return;
     }
