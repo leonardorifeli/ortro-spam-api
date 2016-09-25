@@ -35,19 +35,7 @@ class ClientService {
 
         $this->getGoogleClient()->setAccessToken($accessToken);
 
-        if ($this->getGoogleClient()->isAccessTokenExpired()) {
-            $this->reloadAccessToken();
-        }
-
         return $this->getGoogleClient();
-    }
-
-    private function reloadAccessToken()
-    {
-        $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
-        file_put_contents($credentialsPath, json_encode($this->getGoogleClient()->getAccessToken()));
-
-        return;
     }
 
     public function getCredentialsPath()
