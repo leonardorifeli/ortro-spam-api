@@ -38,12 +38,12 @@ class ClientService {
         return $this->getGoogleClient();
     }
 
-    public function getCredentialsPath()
+    public function getCredentialsPath() : string
     {
         return $this->expandHomeDirectory(ClientEnum::CREDENTIALS_PATH);
     }
 
-    private function expandHomeDirectory($path)
+    private function expandHomeDirectory($path) : string
     {
         $homeDirectory = getenv('HOME');
 
