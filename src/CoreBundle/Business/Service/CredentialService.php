@@ -13,17 +13,44 @@ class CredentialService {
         $this->clientService = $clientService;
     }
 
+    private function getCredentialsPath() :string
+    {
+        return $this->clientService->getCredentialsPath();
+    }
+
     private function getGoogleClient()
     {
         return $this->clientService->getGoogleClient();
     }
 
-    public function getAuthUrl()
+    public function getAuthUrl() : string
     {
         return $this->getGoogleClient()->createAuthUrl();
     }
 
-    public function createCredential($authCode, $email)
+    public function credentialExist() : boolean
+    {
+        if(!file_exists($this->getCredentialsPath())) return false;
+
+        return true;
+    }
+
+    public function credentialIsExpired() : boolean
+    {
+        if(!$this->credentialExist()) return true;
+
+        return $this->getGoogleClient()->isAccessTokenExpired();
+    }
+
+    public function reloadAccessToken() : boolean
+    {
+        $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
+        file_put_contents($this->getCredentialsPath(), json_encode($this->getGoogleClient()->getAccessToken()));
+
+        return true;
+    }
+
+    public function createCredential(string $authCode) : boolean
     {
         if(!$authCode) throw new \Exception("Invalid auth code." 401);
 
