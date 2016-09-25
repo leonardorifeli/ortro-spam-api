@@ -4,7 +4,7 @@ namespace CoreBundle\Business\Service;
 
 use CoreBundle\Business\Service\ClientService;
 
-class ClientService {
+class CredentialService {
 
     private $clientService;
 
@@ -23,7 +23,7 @@ class ClientService {
         return $this->getGoogleClient()->createAuthUrl();
     }
 
-    public createCredential($authCode)
+    public function createCredential($authCode)
     {
         if(!$authCode) throw new \Exception("Invalid auth code." 401);
 
@@ -38,3 +38,5 @@ class ClientService {
 
         return true;
     }
+
+}
