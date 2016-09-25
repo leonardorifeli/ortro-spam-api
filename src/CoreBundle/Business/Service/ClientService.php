@@ -33,14 +33,21 @@ class ClientService {
 
         $accessToken = json_decode(file_get_contents($credentialsPath), true);
 
-        $client->setAccessToken($accessToken);
+        $this->getGoogleClient()->setAccessToken($accessToken);
 
-        if ($client->isAccessTokenExpired()) {
-            $client->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
-            file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+        if ($this->getGoogleClient()->isAccessTokenExpired()) {
+            $this->reloadAccessToken();
         }
 
-        return $client;
+        return $this->getGoogleClient();
+    }
+
+    private function reloadAccessToken()
+    {
+        $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($client->getRefreshToken());
+        file_put_contents($credentialsPath, json_encode($client->getAccessToken()));
+
+        return;
     }
 
     public function getCredentialsPath()
@@ -51,9 +58,11 @@ class ClientService {
     private function expandHomeDirectory($path)
     {
         $homeDirectory = getenv('HOME');
+
         if (empty($homeDirectory)) {
             $homeDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
         }
+
         return str_replace('~', realpath($homeDirectory), $path);
     }
 
