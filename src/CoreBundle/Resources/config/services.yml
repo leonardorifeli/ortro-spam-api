@@ -1,4 +1,9 @@
 services:
-#    core.example:
-#        class: CoreBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
+
+    core.client.service:
+        class: CoreBundle\Business\Service\ClientService
+        arguments: []
+
+    core.credential.service:
+        class: CoreBundle\Business\Service\CredentialService
+        arguments: [@core.client.service]
