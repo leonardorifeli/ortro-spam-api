@@ -61,20 +61,13 @@ class CredentialService {
         return json_decode(file_get_contents($credentialsPath), true);
     }
 
-    public function createCredential(string $authCode) : boolean
+    public function createCredential(string $authCode) : string
     {
         if(!$authCode) throw new \Exception("Invalid auth code.", 401);
 
         $accessToken = $this->getGoogleClient()->fetchAccessTokenWithAuthCode($authCode);
 
-        $credentialsPath = $this->clientService->getCredentialsPath();
-        if(!file_exists(dirname($credentialsPath))) {
-            mkdir(dirname($credentialsPath), 0700, true);
-        }
-
-        file_put_contents($credentialsPath, json_encode($accessToken));
-
-        return true;
+        return json_encode($accessToken);
     }
 
 }

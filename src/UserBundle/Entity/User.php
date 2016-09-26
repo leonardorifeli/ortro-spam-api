@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User
 {
-    
+
     /**
      * @var int
      *
@@ -65,7 +65,7 @@ class User
     /**
      * @var array
      *
-     * @ORM\Column(name="credential_information", type="array", nullable=true)
+     * @ORM\Column(name="credential_information", type="string", nullable=true)
      */
     private $credentialInformation;
 

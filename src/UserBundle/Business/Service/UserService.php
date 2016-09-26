@@ -31,7 +31,7 @@ class UserService
 
         $user = UserAdapter::build($info, (new User()));
 
-        return UserAdapter::toRequest($this->create($user));
+        return UserAdapter::toRequest($this->createOrUpdate($user));
     }
 
     public function userExist(string $email) : bool
@@ -41,6 +41,30 @@ class UserService
         if(!$user) return false;
 
         return true;
+    }
+
+    public function getUserByAccessToken(string $accessToken)
+    {
+        return $this->getRepository()->findOneBy(['accessToken' => $accessToken]);
+    }
+
+    public function updateUserByCredential($accessToken, $googleCode)
+    {
+        $this->validateTokenAndCode($accessToken, $googleCode);
+
+        $user = $this->getUserByAccessToken($accessToken);
+        if(!$user) throw new Exception("User not found", 404);
+
+        $this->updateGoogleAccessTokenByUser($user, $this->credentialService->createCredential($googleCode));
+
+        return $user;
+    }
+
+    public function updateGoogleAccessTokenByUser(User $user, $googleAccessToken)
+    {
+        $user->setCredentialInformation($googleAccessToken);
+
+        return $this->createOrUpdate($user);
     }
 
     public function getUserByEmailAndPasswordToRequest($info)
@@ -72,6 +96,14 @@ class UserService
         return $user;
     }
 
+    public function createOrUpdate(User $entity) : User
+    {
+        $this->em->persist($entity);
+        $this->em->flush();
+
+        return $entity;
+    }
+
     private function validate($info)
     {
         if(!property_exists($info, "name"))
@@ -90,6 +122,15 @@ class UserService
             throw new \Exception("User existis ({$info->email}).", Response::HTTP_UNAUTHORIZED);
     }
 
+    private function validateTokenAndCode($token, $code)
+    {
+        if(is_null($token))
+            throw new \Exception("Access token is invalid.", Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        if(is_null($code))
+            throw new \Exception("Google code is invalid.", Response::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
     private function validateSimpleRequest($info)
     {
         if(!property_exists($info, "email"))
@@ -97,14 +138,6 @@ class UserService
 
         if((strlen($info->password) < 6) || !property_exists($info, "password"))
             throw new \Exception("Password is small.", Response::HTTP_INTERNAL_SERVER_ERROR);
-    }
-
-    public function create(User $entity) : User
-    {
-        $this->em->persist($entity);
-        $this->em->flush();
-
-        return $entity;
     }
 
 }

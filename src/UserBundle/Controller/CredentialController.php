@@ -17,15 +17,12 @@ class CredentialController extends Controller
     public function updateAction(Request $request) : Response
     {
         try {
-            $accessToken = $request->header->get('access_token');
-            $googleCode = $request->header->get('google_code');
+            $accessToken = $request->headers->get('access-token');
+            $googleCode = $request->headers->get('google-code');
 
             $user = $this->getUserService()->updateUserByCredential($accessToken, $googleCode);
 
-            if(is_string($user))
-                return $this->getResponse(['authorized' => false, 'url' => $user, "finded" => !!($user)], 200);
-
-            return $this->getResponse(['authorized' => true, 'user' => $user, "finded" => !!($user)], 200);
+            return $this->getResponse(['authorized' => true, 'user' => $user], 200);
         } catch (\Exception $e) {
             return $this->getResponse(['finded' => false, "message" => $e->getMessage()], ($e->getCode() != 0) ? $e->getCode() : 500);
         }
