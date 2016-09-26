@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class LoginController extends Controller
+class CredentialController extends Controller
 {
 
     private function getUserService()
@@ -14,10 +14,13 @@ class LoginController extends Controller
         return $this->get('user.service');
     }
 
-    public function loginAction(Request $request) : Response
+    public function updateAction(Request $request) : Response
     {
         try {
-            $user = $this->getUserService()->getUserByEmailAndPasswordToRequest(json_decode($request->getContent()));
+            $accessToken = $request->header->get('access_token');
+            $googleCode = $request->header->get('google_code');
+
+            $user = $this->getUserService()->updateUserByCredential($accessToken, $googleCode);
 
             if(is_string($user))
                 return $this->getResponse(['authorized' => false, 'url' => $user, "finded" => !!($user)], 200);

@@ -6,15 +6,18 @@ use UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use UserBundle\Business\Adapter\UserAdapter;
 use Symfony\Component\HttpFoundation\Response;
+use CoreBundle\Business\Service\CredentialService;
 
 class UserService
 {
 
     private $em;
+    private $credentialService;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, CredentialService $credentialService)
     {
         $this->em = $em;
+        $this->credentialService = $credentialService;
     }
 
     private function getRepository()
@@ -48,7 +51,16 @@ class UserService
 
         if(!$user) return null;
 
+        if($this->requireAuthorize($user)) return $this->credentialService->getAuthUrl();
+
         return UserAdapter::toRequest($user);
+    }
+
+    private function requireAuthorize(User $user) : bool
+    {
+        if($user->getCredentialInformation()) return false;
+
+        return true;
     }
 
     public function getUserByEmailAndPassword(string $email, string $password)

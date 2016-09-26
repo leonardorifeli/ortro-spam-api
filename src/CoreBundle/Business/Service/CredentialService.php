@@ -63,7 +63,7 @@ class CredentialService {
 
     public function createCredential(string $authCode) : boolean
     {
-        if(!$authCode) throw new \Exception("Invalid auth code." 401);
+        if(!$authCode) throw new \Exception("Invalid auth code.", 401);
 
         $accessToken = $this->getGoogleClient()->fetchAccessTokenWithAuthCode($authCode);
 

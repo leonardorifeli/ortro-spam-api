@@ -10,7 +10,7 @@ class ClientService {
 
     public function getGoogleClient()
     {
-        if($this->googleClient) return $this->googleClient;
+        if(!is_null($this->googleClient)) return $this->googleClient;
 
         $this->googleClient = new \Google_Client();
         $this->googleClient->setApplicationName(ClientEnum::APPLICATION_NAME);
