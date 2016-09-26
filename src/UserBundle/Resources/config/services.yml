@@ -1,4 +1,4 @@
 services:
-#    user.example:
-#        class: UserBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
+    user.service:
+        class: UserBundle\Business\Service\UserService
+        arguments: ["@doctrine.orm.entity_manager"]

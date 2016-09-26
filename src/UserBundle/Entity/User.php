@@ -29,9 +29,9 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="password", type="string", length=255)
+     * @ORM\Column(name="access_token", type="string", length=255)
      */
-    private $password;
+    private $accessToken;
 
     /**
      * @var string
@@ -57,7 +57,7 @@ class User
     /**
      * @var array
      *
-     * @ORM\Column(name="credential_information", type="json_array")
+     * @ORM\Column(name="credential_information", type="array", nullable=true)
      */
     private $credentialInformation;
 
@@ -228,21 +228,21 @@ class User
      *
      * @return string
      */
-    public function getPassword()
+    public function getAccessToken()
     {
-        return $this->password;
+        return $this->accessToken;
     }
 
     /**
-     * Set the value of Password
+     * Set the value of AccessToken
      *
-     * @param string password
+     * @param string accessToken
      *
      * @return self
      */
-    public function setPassword($password)
+    public function setAccessToken($accessToken)
     {
-        $this->password = $password;
+        $this->accessToken = $accessToken;
 
         return $this;
     }
