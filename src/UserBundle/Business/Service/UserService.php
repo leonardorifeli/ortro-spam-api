@@ -57,7 +57,7 @@ class UserService
 
         $this->updateGoogleAccessTokenByUser($user, $this->credentialService->createCredential($googleCode));
 
-        return $user;
+        return UserAdapter::toRequest($user);
     }
 
     public function updateGoogleAccessTokenByUser(User $user, $googleAccessToken)
