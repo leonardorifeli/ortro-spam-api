@@ -40,6 +40,26 @@ class UserService
         return true;
     }
 
+    public function getUserByEmailAndPasswordToRequest($info)
+    {
+        $this->validateSimpleRequest($info);
+
+        $user = $this->getUserByEmailAndPassword($info->email, $info->password);
+
+        if(!$user) return null;
+
+        return UserAdapter::toRequest($user);
+    }
+
+    public function getUserByEmailAndPassword(string $email, string $password)
+    {
+        $user = $this->getRepository()->findOneBy(["email" => $email, "password" => UserAdapter::encriptPassword($password)]);
+
+        if(!$user) return null;
+
+        return $user;
+    }
+
     private function validate($info)
     {
         if(!property_exists($info, "name"))
@@ -48,8 +68,23 @@ class UserService
         if(!property_exists($info, "email"))
             throw new \Exception("E-mail is invalid.", Response::HTTP_INTERNAL_SERVER_ERROR);
 
+        if((strlen($info->password) < 6) || !property_exists($info, "password"))
+            throw new \Exception("Password is small.", Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        if(!filter_var($info->email, FILTER_VALIDATE_EMAIL))
+            throw new \Exception("E-mail is invalid.", Response::HTTP_INTERNAL_SERVER_ERROR);
+
         if($this->userExist($info->email))
             throw new \Exception("User existis ({$info->email}).", Response::HTTP_UNAUTHORIZED);
+    }
+
+    private function validateSimpleRequest($info)
+    {
+        if(!property_exists($info, "email"))
+            throw new \Exception("E-mail is invalid.", Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        if((strlen($info->password) < 6) || !property_exists($info, "password"))
+            throw new \Exception("Password is small.", Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     public function create(User $entity) : User

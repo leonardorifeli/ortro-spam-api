@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-class CreateController extends Controller
+class LoginController extends Controller
 {
 
     private function getUserService()
@@ -14,14 +14,14 @@ class CreateController extends Controller
         return $this->get('user.service');
     }
 
-    public function buildAction(Request $request) : Response
+    public function loginAction(Request $request) : Response
     {
         try {
-            $user = $this->getUserService()->createByRequest(json_decode($request->getContent()));
+            $user = $this->getUserService()->getUserByEmailAndPasswordToRequest(json_decode($request->getContent()));
 
-            return $this->getResponse(['user' => $user, 'isCreated' => true], 200);
+            return $this->getResponse(['user' => $user, "finded" => !!($user)], 200);
         } catch (\Exception $e) {
-            return $this->getResponse(['isCreated' => false, "message" => $e->getMessage()], $e->getCode());
+            return $this->getResponse(['finded' => false, "message" => $e->getMessage()], $e->getCode());
         }
     }
 

@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User
 {
+    
     /**
      * @var int
      *
@@ -32,6 +33,13 @@ class User
      * @ORM\Column(name="access_token", type="string", length=255)
      */
     private $accessToken;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=255)
+     */
+    private $password;
 
     /**
      * @var string
@@ -243,6 +251,30 @@ class User
     public function setAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Password
+     *
+     * @return string
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set the value of Password
+     *
+     * @param string password
+     *
+     * @return self
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
 
         return $this;
     }

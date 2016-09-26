@@ -12,11 +12,17 @@ abstract class UserAdapter
         $entity->setName($information->name);
         $entity->setEmail($information->email);
         $entity->setAccessToken(self::encriptAccessToken());
+        $entity->setPassword(self::encriptPassword($information->password));
         $entity->setCreatedAt(new \DateTime());
         $entity->setUpdatedAt(new \DateTime());
         $entity->setIsActive(true);
 
         return $entity;
+    }
+
+    public static final function encriptPassword(string $password) : string
+    {
+        return hash('sha256', md5($password.md5($password)));
     }
 
     private static final function encriptAccessToken() : string

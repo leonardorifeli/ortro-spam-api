@@ -1,4 +1,9 @@
-user:
+user_create:
     path:     /create
     defaults: { _controller: UserBundle:Create:build }
+    methods: [POST]
+
+user_login_check:
+    path:     /login
+    defaults: { _controller: UserBundle:Login:login }
     methods: [POST]
