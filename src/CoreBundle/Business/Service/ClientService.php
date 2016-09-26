@@ -23,15 +23,13 @@ class ClientService {
         return $this->googleClient;
     }
 
-    public function get()
+    public function get(string $accessToken)
     {
         $credentialsPath = $this->getCredentialsPath();
 
-        if(!file_exists($credentialsPath)) {
-            throw new \Exception("Credentials file not exist.", 401);
+        if(!$accessToken) {
+            throw new \Exception("Access token invalid.", 401);
         }
-
-        $accessToken = json_decode(file_get_contents($credentialsPath), true);
 
         $this->getGoogleClient()->setAccessToken($accessToken);
 

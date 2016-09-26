@@ -44,10 +44,21 @@ class CredentialService {
 
     public function reloadAccessToken() : boolean
     {
+        if(!$this->credentialIsExpired() || !$this->credentialExist()) return false;
+
         $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
         file_put_contents($this->getCredentialsPath(), json_encode($this->getGoogleClient()->getAccessToken()));
 
         return true;
+    }
+
+    public function get() : string
+    {
+        if(!$this->credentialIsExpired()) return json_decode(file_get_contents($credentialsPath), true);
+
+        $this->reloadAccessToken();
+
+        return json_decode(file_get_contents($credentialsPath), true);
     }
 
     public function createCredential(string $authCode) : boolean
