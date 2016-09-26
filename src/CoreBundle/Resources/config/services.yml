@@ -1,9 +1,8 @@
 services:
-
     core.client.service:
         class: CoreBundle\Business\Service\ClientService
         arguments: []
 
     core.credential.service:
         class: CoreBundle\Business\Service\CredentialService
-        arguments: [@core.client.service]
+        arguments: ["@core.client.service"]
