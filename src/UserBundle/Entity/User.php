@@ -44,9 +44,9 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=255, unique=true)
+     * @ORM\Column(name="username", type="string", length=255, unique=true)
      */
-    private $email;
+    private $username;
 
     /**
      * @var \DateTime
@@ -76,9 +76,13 @@ class User
      */
     private $isActive;
 
+    /**
+     * @ORM\OneToOne(targetEntity="UserEmail", mappedBy="user")
+     */
+    private $emails;
 
     /**
-     * Get id
+     * Get the value of Id
      *
      * @return int
      */
@@ -88,21 +92,7 @@ class User
     }
 
     /**
-     * Set name
-     *
-     * @param string $name
-     *
-     * @return User
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
+     * Get the value of Name
      *
      * @return string
      */
@@ -112,127 +102,21 @@ class User
     }
 
     /**
-     * Set email
+     * Set the value of Name
      *
-     * @param string $email
+     * @param string name
      *
-     * @return User
+     * @return self
      */
-    public function setEmail($email)
+    public function setName($name)
     {
-        $this->email = $email;
+        $this->name = $name;
 
         return $this;
     }
 
     /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     *
-     * @return User
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * Set updatedAt
-     *
-     * @param \DateTime $updatedAt
-     *
-     * @return User
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Get updatedAt
-     *
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * Set credentialInformation
-     *
-     * @param array $credentialInformation
-     *
-     * @return User
-     */
-    public function setCredentialInformation($credentialInformation)
-    {
-        $this->credentialInformation = $credentialInformation;
-
-        return $this;
-    }
-
-    /**
-     * Get credentialInformation
-     *
-     * @return array
-     */
-    public function getCredentialInformation()
-    {
-        return $this->credentialInformation;
-    }
-
-    /**
-     * Set isActive
-     *
-     * @param boolean $isActive
-     *
-     * @return User
-     */
-    public function setIsActive($isActive)
-    {
-        $this->isActive = $isActive;
-
-        return $this;
-    }
-
-    /**
-     * Get isActive
-     *
-     * @return bool
-     */
-    public function getIsActive()
-    {
-        return $this->isActive;
-    }
-
-    /**
-     * Get the value of Password
+     * Get the value of Access Token
      *
      * @return string
      */
@@ -242,7 +126,7 @@ class User
     }
 
     /**
-     * Set the value of AccessToken
+     * Set the value of Access Token
      *
      * @param string accessToken
      *
@@ -275,6 +159,150 @@ class User
     public function setPassword($password)
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set the value of Username
+     *
+     * @param string username
+     *
+     * @return self
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Created At
+     *
+     * @return \DateTime
+     */
+    public function getCreatedAt()
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * Set the value of Created At
+     *
+     * @param \DateTime createdAt
+     *
+     * @return self
+     */
+    public function setCreatedAt(\DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Updated At
+     *
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * Set the value of Updated At
+     *
+     * @param \DateTime updatedAt
+     *
+     * @return self
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Credential Information
+     *
+     * @return array
+     */
+    public function getCredentialInformation()
+    {
+        return $this->credentialInformation;
+    }
+
+    /**
+     * Set the value of Credential Information
+     *
+     * @param array credentialInformation
+     *
+     * @return self
+     */
+    public function setCredentialInformation(array $credentialInformation)
+    {
+        $this->credentialInformation = $credentialInformation;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Is Active
+     *
+     * @return bool
+     */
+    public function getIsActive()
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * Set the value of Is Active
+     *
+     * @param bool isActive
+     *
+     * @return self
+     */
+    public function setIsActive($isActive)
+    {
+        $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of Emails
+     *
+     * @return mixed
+     */
+    public function getEmails()
+    {
+        return $this->emails;
+    }
+
+    /**
+     * Set the value of Emails
+     *
+     * @param mixed emails
+     *
+     * @return self
+     */
+    public function setEmails($emails)
+    {
+        $this->emails = $emails;
 
         return $this;
     }
