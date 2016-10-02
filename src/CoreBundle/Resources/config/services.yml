@@ -5,4 +5,4 @@ services:
 
     core.credential.service:
         class: CoreBundle\Business\Service\CredentialService
-        arguments: ["@core.client.service"]
+        arguments: ["@user.service","@core.client.service"]
