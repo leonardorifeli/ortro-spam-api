@@ -5,22 +5,20 @@ namespace UserBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use UserBundle\Business\Service\UserCredentialService;
 
 class CredentialController extends Controller
 {
 
-    private function getUserService()
+    private function getUserCredentialService() : UserCredentialService
     {
-        return $this->get('user.service');
+        return $this->get('user.credential.service');
     }
 
     public function updateAction(Request $request) : Response
     {
         try {
-            $accessToken = $request->headers->get('access-token');
-            $googleCode = $request->headers->get('google-code');
-
-            $user = $this->getUserService()->updateUserByCredential($accessToken, $googleCode);
+            $user = $this->getUserCredentialService()->updateUserByCredential($request->headers->get('access-token'), $request->headers->get('google-code'));
 
             return $this->getResponse(['authorized' => true, 'user' => $user], 200);
         } catch (\Exception $e) {
