@@ -18,6 +18,13 @@ class UserService
         $this->em = $em;
     }
 
+    public function getAllValidUsers() : array
+    {
+        $entities = $this->getRepository()->findAllValidUsers();
+
+        return $entities;
+    }
+
     public function updateCredentialInformation(User $user, string $credentialInformation)
     {
         $user->setCredentialInformation($credentialInformation);

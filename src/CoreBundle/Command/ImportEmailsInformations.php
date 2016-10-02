@@ -7,26 +7,29 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use CoreBundle\Business\Service\ClientService;
+use UserBundle\Business\Service\UserService;
 
-class EmailDateInformationCommand extends ContainerAwareCommand
+class ImportEmailsInformations extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName('email:import')
-            ->setDescription('Import email date informations')
-            ->addArgument('email', InputArgument::REQUIRED, 'Email of gmail');
+            ->setName('email:proccess:import')
+            ->setDescription('Import email date informations');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $argument = $input->getArgument('email');
-
         if (php_sapi_name() != 'cli') {
             throw new \Exception('This application must be run on the command line.');
         }
 
-        $client = $this->getClient();
+        $users = $this->getUserService()->getAllValidUsers();
+
+        dump($users);die;
+
+        $client = $this->getClientService();
         $service = new \Google_Service_Gmail($client);
 
         $user = 'me';
@@ -42,6 +45,16 @@ class EmailDateInformationCommand extends ContainerAwareCommand
         }
 
         $output->writeln('Command result.');
+    }
+
+    private function getUserService() : UserService
+    {
+        return $this->container->get('user.service');
+    }
+
+    private function getClientService() : ClientService
+    {
+        return $this->container->get('core.client.service');
     }
 
 }
