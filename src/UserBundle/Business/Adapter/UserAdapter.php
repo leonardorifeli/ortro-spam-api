@@ -35,7 +35,8 @@ abstract class UserAdapter
         return $data = [
             "name" => $entity->getName(),
             "email" => $entity->getEmail(),
-            "token" => $entity->getAccessToken()
+            "token" => $entity->getAccessToken(),
+            'oauth2' => json_decode($entity->getCredentialInformation())
         ];
     }
 
