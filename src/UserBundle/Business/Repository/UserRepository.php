@@ -7,11 +7,11 @@ use Doctrine\ORM\EntityRepository;
 class UserRepository extends EntityRepository
 {
 
-    public function getAllValidUsers() : array
+    public function findAllValidUsers() : array
     {
         $query = $this->createQueryBuilder('u')
                     ->where('u.isActive = true')
-                    ->andWhere('u.credentialInformation <> null');
+                    ->andWhere('u.credentialInformation IS NOT NULL');
 
         return $query->getQuery()->getResult();
     }
