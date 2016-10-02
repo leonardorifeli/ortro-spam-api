@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use UserBundle\Business\Service\UserService;
+use UserBundle\Business\Service\UserCredentialService;
 use CoreBundle\Business\Service\CredentialService;
 
 class LoginController extends Controller
@@ -21,6 +22,11 @@ class LoginController extends Controller
         return $this->get('core.credential.service');
     }
 
+    private function getUserCredentialService() : UserCredentialService
+    {
+        return $this->get('user.credential.service');
+    }
+
     public function loginAction(Request $request) : Response
     {
         try {
@@ -28,6 +34,8 @@ class LoginController extends Controller
 
             if(is_string($user) && $user == "inauthorized")
                 return $this->getResponse(['authorized' => false, 'url' => $this->getCredentialService()->getAuthUrl(), "finded" => !!($user)], 200);
+
+            $this->getUserCredentialService()->checkCredentialInformationIsValid($user['token']);
 
             return $this->getResponse(['authorized' => true, 'user' => $user, "finded" => !!($user)], 200);
         } catch (\Exception $e) {
