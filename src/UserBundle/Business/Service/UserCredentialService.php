@@ -34,6 +34,7 @@ class UserCredentialService
         if(!$user) throw new Exception("User not found", 404);
 
         $googleAccessToken = $this->getCredentialService()->createCredential($user, $googleCode);
+        
         $this->updateGoogleAccessTokenByUser($user, $googleAccessToken);
 
         return UserAdapter::toRequest($user);
