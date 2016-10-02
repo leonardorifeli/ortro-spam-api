@@ -6,6 +6,7 @@ use UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use UserBundle\Business\Adapter\UserAdapter;
 use Symfony\Component\HttpFoundation\Response;
+use UserBundle\Business\Repository\UserRepository;
 
 class UserService
 {
@@ -70,7 +71,7 @@ class UserService
         return $entity;
     }
 
-    private function getRepository()
+    private function getRepository() : UserRepository
     {
         return $this->em->getRepository("UserBundle:User");
     }
