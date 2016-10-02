@@ -30,7 +30,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="access_token", type="string", length=255)
+     * @ORM\Column(name="access_token", type="string", length=255, unique=true)
      */
     private $accessToken;
 
