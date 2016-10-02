@@ -4,6 +4,7 @@ namespace CoreBundle\Business\Service;
 
 use CoreBundle\Business\Service\ClientService;
 use UserBundle\Business\Service\UserService;
+use UserBundle\Entity\User;
 
 class CredentialService {
 
@@ -29,7 +30,7 @@ class CredentialService {
     public function reloadAccessToken(User $user) : bool
     {
         if(!$this->credentialIsExpired()) return false;
-        echo 1;die;
+
         dump($this->getGoogleClient()->getRefreshToken());die;
 
         $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
@@ -52,13 +53,8 @@ class CredentialService {
         if(!$authCode) throw new \Exception("Invalid auth code.", 401);
 
         $accessToken = $this->getGoogleClient()->fetchAccessTokenWithAuthCode($authCode);
-        dump($accessToken);die;
 
         $this->getGoogleClient()->setAccessToken($accessToken);
-
-        dump($accessToken);
-        dump($this->reloadAccessToken());
-        die;
 
         return json_encode($accessToken);
     }
