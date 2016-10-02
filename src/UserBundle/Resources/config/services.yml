@@ -1,4 +1,8 @@
 services:
     user.service:
         class: UserBundle\Business\Service\UserService
-        arguments: ["@doctrine.orm.entity_manager", "@core.credential.service"]
+        arguments: ["@doctrine.orm.entity_manager"]
+
+    user.credential.service:
+        class: UserBundle\Business\Service\UserCredentialService
+        arguments: ["@user.service", "@core.credential.service"]
