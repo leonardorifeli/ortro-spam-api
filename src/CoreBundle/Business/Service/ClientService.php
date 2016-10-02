@@ -19,6 +19,7 @@ class ClientService {
         ));
         $this->googleClient->setAuthConfig(ClientEnum::CLIENT_SECRET_PATH);
         $this->googleClient->setAccessType('offline');
+        $this->googleClient->setApprovalPrompt("force");
 
         return $this->googleClient;
     }
@@ -27,9 +28,21 @@ class ClientService {
     {
         if(!$accessToken) throw new \Exception("Access token invalid.", 401);
 
-        $this->getGoogleClient()->setAccessToken($accessToken);
+        $this->checkCredentialInformationIsValid($accessToken);
 
         return $this->getGoogleClient();
+    }
+
+    public function checkCredentialInformationIsValid(string $accessToken)
+    {
+
+        $this->getGoogleClient()->setAccessToken($accessToken);
+
+        if (!$this->getGoogleClient()->isAccessTokenExpired()) return;
+
+        $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
+
+        return json_encode($this->getGoogleClient()->getAccessToken());
     }
 
 }
