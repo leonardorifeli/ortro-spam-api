@@ -27,27 +27,6 @@ class CredentialService {
         return $this->getGoogleClient()->isAccessTokenExpired();
     }
 
-    public function reloadAccessToken(User $user) : bool
-    {
-        if(!$this->credentialIsExpired()) return false;
-
-        dump($this->getGoogleClient()->getRefreshToken());die;
-
-        $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
-        file_put_contents($this->getCredentialsPath(), json_encode($this->getGoogleClient()->getAccessToken()));
-
-        return true;
-    }
-
-    public function get() : array
-    {
-        if(!$this->credentialIsExpired()) return json_decode(file_get_contents($credentialsPath), true);
-
-        $this->reloadAccessToken();
-
-        return json_decode(file_get_contents($credentialsPath), true);
-    }
-
     public function createCredential(User $user, string $authCode) : string
     {
         if(!$authCode) throw new \Exception("Invalid auth code.", 401);
@@ -57,6 +36,28 @@ class CredentialService {
         $this->getGoogleClient()->setAccessToken($accessToken);
 
         return json_encode($accessToken);
+    }
+
+    public function checkCredentialInformationIsValid(User $user)
+    {
+        $this->checkCredentialToken($user);
+
+        $this->getGoogleClient()->setAccessToken($user->getCredentialInformation());
+
+        if ($this->credentialIsExpired()) {
+            $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
+            $this->getUserService()->updateCredentialInformation($user, json_encode($this->getGoogleClient()->getAccessToken()));
+        }
+    }
+
+    private function checkCredentialToken(User $user)
+    {
+        $token = json_decode($user->getCredentialInformation());
+
+        if(!array_key_exists("expires_in", $token)) {
+            $this->getUserService()->resetCredentialInformation($user);
+            throw new \Exception("Credential information of user is invalid. Restart the login.", 500);
+        }
     }
 
     private function getGoogleClient()
