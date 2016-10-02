@@ -5,11 +5,12 @@ namespace UserBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use UserBundle\Business\Service\UserService;
 
 class CreateController extends Controller
 {
 
-    private function getUserService()
+    private function getUserService() : UserService
     {
         return $this->get('user.service');
     }

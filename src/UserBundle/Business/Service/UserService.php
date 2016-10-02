@@ -6,23 +6,15 @@ use UserBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
 use UserBundle\Business\Adapter\UserAdapter;
 use Symfony\Component\HttpFoundation\Response;
-use CoreBundle\Business\Service\CredentialService;
 
 class UserService
 {
 
     private $em;
-    private $credentialService;
 
-    public function __construct(EntityManager $em, CredentialService $credentialService)
+    public function __construct(EntityManager $em)
     {
         $this->em = $em;
-        $this->credentialService = $credentialService;
-    }
-
-    private function getRepository()
-    {
-        return $this->em->getRepository("UserBundle:User");
     }
 
     public function createByRequest($info) : array
@@ -48,25 +40,6 @@ class UserService
         return $this->getRepository()->findOneBy(['accessToken' => $accessToken]);
     }
 
-    public function updateUserByCredential($accessToken, $googleCode)
-    {
-        $this->validateTokenAndCode($accessToken, $googleCode);
-
-        $user = $this->getUserByAccessToken($accessToken);
-        if(!$user) throw new Exception("User not found", 404);
-
-        $this->updateGoogleAccessTokenByUser($user, $this->credentialService->createCredential($googleCode));
-
-        return UserAdapter::toRequest($user);
-    }
-
-    public function updateGoogleAccessTokenByUser(User $user, $googleAccessToken)
-    {
-        $user->setCredentialInformation($googleAccessToken);
-
-        return $this->createOrUpdate($user);
-    }
-
     public function getUserByEmailAndPasswordToRequest($info)
     {
         $this->validateSimpleRequest($info);
@@ -75,16 +48,9 @@ class UserService
 
         if(!$user) return null;
 
-        if($this->requireAuthorize($user)) return $this->credentialService->getAuthUrl();
+        if($this->requireAuthorize($user)) return "inauthorized";
 
         return UserAdapter::toRequest($user);
-    }
-
-    private function requireAuthorize(User $user) : bool
-    {
-        if($user->getCredentialInformation()) return false;
-
-        return true;
     }
 
     public function getUserByEmailAndPassword(string $email, string $password)
@@ -104,6 +70,18 @@ class UserService
         return $entity;
     }
 
+    private function getRepository()
+    {
+        return $this->em->getRepository("UserBundle:User");
+    }
+
+    private function requireAuthorize(User $user) : bool
+    {
+        if($user->getCredentialInformation()) return false;
+
+        return true;
+    }
+
     private function validate($info)
     {
         if(!property_exists($info, "name"))
@@ -120,15 +98,6 @@ class UserService
 
         if($this->userExist($info->email))
             throw new \Exception("User existis ({$info->email}).", Response::HTTP_UNAUTHORIZED);
-    }
-
-    private function validateTokenAndCode($token, $code)
-    {
-        if(is_null($token))
-            throw new \Exception("Access token is invalid.", Response::HTTP_INTERNAL_SERVER_ERROR);
-
-        if(is_null($code))
-            throw new \Exception("Google code is invalid.", Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
     private function validateSimpleRequest($info)

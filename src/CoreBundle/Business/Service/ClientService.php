@@ -25,31 +25,11 @@ class ClientService {
 
     public function get(string $accessToken)
     {
-        $credentialsPath = $this->getCredentialsPath();
-
-        if(!$accessToken) {
-            throw new \Exception("Access token invalid.", 401);
-        }
+        if(!$accessToken) throw new \Exception("Access token invalid.", 401);
 
         $this->getGoogleClient()->setAccessToken($accessToken);
 
         return $this->getGoogleClient();
-    }
-
-    public function getCredentialsPath() : string
-    {
-        return $this->expandHomeDirectory(ClientEnum::CREDENTIALS_PATH);
-    }
-
-    private function expandHomeDirectory($path) : string
-    {
-        $homeDirectory = getenv('HOME');
-
-        if (empty($homeDirectory)) {
-            $homeDirectory = getenv('HOMEDRIVE') . getenv('HOMEPATH');
-        }
-
-        return str_replace('~', realpath($homeDirectory), $path);
     }
 
 }
