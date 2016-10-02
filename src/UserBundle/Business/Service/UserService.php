@@ -18,6 +18,12 @@ class UserService
         $this->em = $em;
     }
 
+    public function updateCredentialInformation(User $user, string $credentialInformation)
+    {
+        $user->setCredentialInformation($credentialInformation);
+        $this->createOrUpdate($user);
+    }
+
     public function createByRequest($info) : array
     {
         $this->validate($info);
@@ -25,6 +31,12 @@ class UserService
         $user = UserAdapter::build($info, (new User()));
 
         return UserAdapter::toRequest($this->createOrUpdate($user));
+    }
+
+    public function resetCredentialInformation(User $user)
+    {
+        $user->setCredentialInformation(null);
+        $this->createOrUpdate($user);
     }
 
     public function userExist(string $email) : bool
@@ -49,7 +61,7 @@ class UserService
 
         if(!$user) return null;
 
-        if($this->requireAuthorize($user)) return "inauthorized";
+        if($this->requireGoogleAuthorize($user)) return "inauthorized";
 
         return UserAdapter::toRequest($user);
     }
@@ -76,7 +88,7 @@ class UserService
         return $this->em->getRepository("UserBundle:User");
     }
 
-    private function requireAuthorize(User $user) : bool
+    private function requireGoogleAuthorize(User $user) : bool
     {
         if($user->getCredentialInformation()) return false;
 
