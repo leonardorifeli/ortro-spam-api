@@ -44,9 +44,9 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="username", type="string", length=255, unique=true)
+     * @ORM\Column(name="email", type="string", length=255, unique=true)
      */
-    private $username;
+    private $email;
 
     /**
      * @var \DateTime
@@ -164,25 +164,25 @@ class User
     }
 
     /**
-     * Get the value of Username
+     * Get the value of Email
      *
      * @return string
      */
-    public function getUsername()
+    public function getEmail()
     {
-        return $this->username;
+        return $this->email;
     }
 
     /**
-     * Set the value of Username
+     * Set the value of Email
      *
-     * @param string username
+     * @param string email
      *
      * @return self
      */
-    public function setUsername($username)
+    public function setEmail($email)
     {
-        $this->username = $username;
+        $this->email = $email;
 
         return $this;
     }
@@ -252,7 +252,7 @@ class User
      *
      * @return self
      */
-    public function setCredentialInformation(array $credentialInformation)
+    public function setCredentialInformation($credentialInformation)
     {
         $this->credentialInformation = $credentialInformation;
 
