@@ -9,43 +9,113 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use CoreBundle\Business\Service\ClientService;
 use UserBundle\Business\Service\UserService;
+use UserBundle\Entity\User;
 
 class ImportEmailInformationCommand extends ContainerAwareCommand
 {
+
+    const LIMIT = 20;
+    private $gmailService;
+    private $userCredential;
+
     protected function configure()
     {
-        $this
-            ->setName('email:import')
-            ->setDescription('Import email date informations');
+        $this->setName('email:import')->setDescription('Import email date informations');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (php_sapi_name() != 'cli') {
-            throw new \Exception('This application must be run on the command line.');
-        }
-
-        $users = $this->getUserService()->getAllValidUsers();
+        if (php_sapi_name() != 'cli') throw new \Exception('This application must be run on the command line.');
 
         array_map(function($user) {
-            $client = $this->getClientService()->get($user->getCredentialInformation());
 
-            //$service = new \Google_Service_Gmail($client);
-            //$user = 'me';
-            //$results = $service->users_labels->listUsersLabels($user);
+            $this->proccessUserCredential($user->getCredentialInformation());
+            $this->proccessMessages($user);
 
-            $service = new \Google_Service_Books($client);
+        }, $this->getUserService()->getAllValidUsers());
 
-            $client->setDefer(true);
-            $optParams = array('filter' => 'free-ebooks');
-            $request = $service->volumes->listVolumes('Henry David Thoreau', $optParams);
-            $resultsDeferred = $client->execute($request);
+        $output->writeln('acabou.');
+    }
 
-            dump($resultsDeferred);die;
+    private function proccessMessages(User $user)
+    {
+        $messages = $this->getMessages($user, self::LIMIT, "UNREAD");
 
-        }, $users);
+        $i = 0;
+        while($i <= $this->getCountList($messages)) {
+            $this->proccessSingleMessage($user, $messages[$i]);
 
-        $output->writeln('Command result.');
+            if(is_null($messages->nextPageToken)) break;
+
+            if($i == $this->getCountList($messages)) {
+                $this->proccessListMoreMessage($i, $messages);
+                if(count($messages) == 0) break;
+            }
+
+            $i++;
+        }
+
+        return;
+    }
+
+    private function proccessListMoreMessage(int &$i, &$messages)
+    {
+        $i = 0;
+        $messages = $this->getMessages($user, self::LIMIT, "UNREAD", $messages->nextPageToken);
+        return;
+    }
+
+    private function proccessSingleMessage(User $user, $message)
+    {
+        $optParamsGet['format'] = 'full';
+        $message = $this->getGmailService()->users_messages->get('me', $message->id, $optParamsGet);
+
+        $headers = $message->getPayload()->getHeaders();
+        dump(json_encode($headers));die;
+        $parts = $message->getPayload()->getParts();
+
+        if(count($parts) < 1) return;
+
+        $body = $parts[0]['body'];
+
+        $rawData = $body->data;
+        $sanitizedData = strtr($rawData,'-_', '+/');
+        $decodedMessage = base64_decode($sanitizedData);
+
+        dump($decodedMessage);
+    }
+
+    private function getMessages(User $user, int $limit, string $label, string $pageToken = "") : \Google_Service_Gmail_ListMessagesResponse
+    {
+        $optParams['maxResults'] = $limit;
+        $optParams['labelIds'] = $label;
+        if($pageToken) $optParams['pageToken'] = $pageToken;
+
+        return $this->getGmailService()->users_messages->listUsersMessages("me", $optParams);
+    }
+
+    private function getGmailService()
+    {
+        if($this->gmailService) return $this->gmailService;
+
+        $this->gmailService = new \Google_Service_Gmail($this->getClient());
+
+        return $this->gmailService;
+    }
+
+    private function proccessUserCredential(string $credential)
+    {
+        $this->userCredential = $credential;
+    }
+
+    private function getUserCredential()
+    {
+        return $this->userCredential;
+    }
+
+    private function getClient()
+    {
+        return $this->getClientService()->get($this->getUserCredential());
     }
 
     private function getUserService() : UserService
@@ -56,6 +126,11 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
     private function getClientService() : ClientService
     {
         return $this->getContainer()->get('core.client.service');
+    }
+
+    private function getCountList($array)
+    {
+        return count($array) - 1;
     }
 
 }
