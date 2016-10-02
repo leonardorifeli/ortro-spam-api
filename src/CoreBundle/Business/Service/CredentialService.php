@@ -32,7 +32,7 @@ class CredentialService {
         if(!$authCode) throw new \Exception("Invalid auth code.", 401);
 
         $accessToken = $this->getGoogleClient()->fetchAccessTokenWithAuthCode($authCode);
-
+        
         $this->getGoogleClient()->setAccessToken($accessToken);
 
         return json_encode($accessToken);
@@ -42,12 +42,11 @@ class CredentialService {
     {
         $this->checkCredentialToken($user);
 
-        $this->getGoogleClient()->setAccessToken($user->getCredentialInformation());
+        $token = $this->getClientService()->checkCredentialInformationIsValid($user->getCredentialInformation());
 
-        if ($this->credentialIsExpired()) {
-            $this->getGoogleClient()->fetchAccessTokenWithRefreshToken($this->getGoogleClient()->getRefreshToken());
-            $this->getUserService()->updateCredentialInformation($user, json_encode($this->getGoogleClient()->getAccessToken()));
-        }
+        if(!$token) return;
+
+        $this->getUserService()->updateCredentialInformation($user, $token);
     }
 
     private function checkCredentialToken(User $user)
@@ -63,6 +62,11 @@ class CredentialService {
     private function getGoogleClient()
     {
         return $this->clientService->getGoogleClient();
+    }
+
+    private function getClientService()
+    {
+        return $this->clientService;
     }
 
     private function getUserService() : UserService
