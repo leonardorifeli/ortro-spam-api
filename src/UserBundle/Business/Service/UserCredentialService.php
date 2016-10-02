@@ -20,6 +20,12 @@ class UserCredentialService
         $this->credentialService = $credentialService;
     }
 
+    public function checkCredentialInformationIsValid(string $token)
+    {
+        $user = $this->getUserService()->getUserByAccessToken($token);
+        $this->getCredentialService()->checkCredentialInformationIsValid($user);
+    }
+
     public function updateUserByCredential($accessToken, $googleCode) : array
     {
         $this->validateTokenAndCode($accessToken, $googleCode);
@@ -27,7 +33,7 @@ class UserCredentialService
         $user = $this->getUserService()->getUserByAccessToken($accessToken);
         if(!$user) throw new Exception("User not found", 404);
 
-        $googleAccessToken = $this->credentialService->createCredential($user, $googleCode);
+        $googleAccessToken = $this->getCredentialService()->createCredential($user, $googleCode);
         $this->updateGoogleAccessTokenByUser($user, $googleAccessToken);
 
         return UserAdapter::toRequest($user);
@@ -35,7 +41,7 @@ class UserCredentialService
 
     public function updateGoogleAccessTokenByUser(User $user, $googleAccessToken) : User
     {
-        $user->setCredentialInformation($googleAccessToken);
+        $user->setCredentialInformation(ltrim($googleAccessToken));
 
         return $this->getUserService()->createOrUpdate($user);
     }
@@ -43,6 +49,11 @@ class UserCredentialService
     private function getUserService() : UserService
     {
         return $this->userService;
+    }
+
+    private function getCredentialService()
+    {
+        return $this->credentialService;
     }
 
     private function validateTokenAndCode($token, $code)
