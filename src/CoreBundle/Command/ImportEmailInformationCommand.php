@@ -71,7 +71,12 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
         $message = $this->getGmailService()->users_messages->get('me', $message->id, $optParamsGet);
 
         $headers = $message->getPayload()->getHeaders();
-        dump(json_encode($headers));die;
+
+        $this->getUserMessageService()->proccessHeaderMessageByUser($user, $message->id, $headers);
+    }
+
+    private function proccessBodyMessage($message)
+    {
         $parts = $message->getPayload()->getParts();
 
         if(count($parts) < 1) return;
@@ -81,8 +86,6 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
         $rawData = $body->data;
         $sanitizedData = strtr($rawData,'-_', '+/');
         $decodedMessage = base64_decode($sanitizedData);
-
-        dump($decodedMessage);
     }
 
     private function getMessages(User $user, int $limit, string $label, string $pageToken = "") : \Google_Service_Gmail_ListMessagesResponse
@@ -126,6 +129,11 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
     private function getClientService() : ClientService
     {
         return $this->getContainer()->get('core.client.service');
+    }
+
+    private function getUserMessageService() : UserMessageService
+    {
+        return $this->getContainer()->get('user.message.service');
     }
 
     private function getCountList($array)
