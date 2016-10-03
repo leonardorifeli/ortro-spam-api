@@ -6,3 +6,7 @@ services:
     user.credential.service:
         class: UserBundle\Business\Service\UserCredentialService
         arguments: ["@user.service", "@core.credential.service"]
+
+    user.message.service:
+        class: UserBundle\Business\Service\UserMessageService
+        arguments: ["@doctrine.orm.entity_manager", "@user.service"]
