@@ -21,9 +21,7 @@ class UserMessage
     private $id;
 
     /**
-     * @var int
-     *
-     * @ORM\Column(name="provider_id", type="string", lenght=255)
+     * @ORM\Column(name="provider_id", type="string", length=255)
      */
     private $providerId;
 
