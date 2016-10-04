@@ -12,10 +12,12 @@ class UserMessageService
 {
 
     private $em;
+    private $userService;
 
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, UserService $userService)
     {
         $this->em = $em;
+        $this->userService = $userService;
     }
 
     private function getRepository() : UserRepository
@@ -23,4 +25,8 @@ class UserMessageService
         return $this->em->getRepository("UserBundle:UserMessage");
     }
 
+    private function getUserService()
+    {
+        return $this->userService;
+    }
 }
