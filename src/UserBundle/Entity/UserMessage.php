@@ -23,12 +23,12 @@ class UserMessage
     /**
      * @var int
      *
-     * @ORM\Column(name="provider_id", type="integer")
+     * @ORM\Column(name="provider_id", type="string", lenght=255)
      */
     private $providerId;
 
     /**
-     * @ORM\Column(name="header_information", type="text", length=255)
+     * @ORM\Column(name="header_information", type="text")
      */
     private $headerInformation;
 
