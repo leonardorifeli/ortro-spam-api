@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use CoreBundle\Business\Service\ClientService;
 use UserBundle\Business\Service\UserService;
 use UserBundle\Entity\User;
+use UserBundle\Business\Service\UserMessageService;
 
 class ImportEmailInformationCommand extends ContainerAwareCommand
 {
@@ -27,38 +28,47 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
     {
         if (php_sapi_name() != 'cli') throw new \Exception('This application must be run on the command line.');
 
-        array_map(function($user) {
+        array_map(function($user) use ($output) {
 
             $this->proccessUserCredential($user->getCredentialInformation());
-            $this->proccessMessages($user);
+            $this->proccessMessages($user, $output);
 
         }, $this->getUserService()->getAllValidUsers());
 
-        $output->writeln('acabou.');
+        $output->writeln("\n<info>Finished all!</info>");
     }
 
-    private function proccessMessages(User $user)
+    private function proccessMessages(User $user, OutputInterface $output)
     {
         $messages = $this->getMessages($user, self::LIMIT, "UNREAD");
 
+        $output->writeln("<info>Proccess messages of {$user->getEmail()} user...</info>");
+
         $i = 0;
+        $actual = 1;
         while($i <= $this->getCountList($messages)) {
+            if($i != $this->getCountList($messages)) $output->write("<info>Importing {$actual} message...</info>");
+
             $this->proccessSingleMessage($user, $messages[$i]);
+
+            if($i != $this->getCountList($messages)) $output->writeln(" Finished!");
 
             if(is_null($messages->nextPageToken)) break;
 
             if($i == $this->getCountList($messages)) {
-                $this->proccessListMoreMessage($i, $messages);
+                $this->proccessListMoreMessage($user, $i, $messages);
                 if(count($messages) == 0) break;
+                $this->getUserMessageService()->flush();
             }
 
             $i++;
+            $actual++;
         }
 
         return;
     }
 
-    private function proccessListMoreMessage(int &$i, &$messages)
+    private function proccessListMoreMessage(User $user, int &$i, &$messages)
     {
         $i = 0;
         $messages = $this->getMessages($user, self::LIMIT, "UNREAD", $messages->nextPageToken);
@@ -73,6 +83,8 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
         $headers = $message->getPayload()->getHeaders();
 
         $this->getUserMessageService()->proccessHeaderMessageByUser($user, $message->id, $headers);
+
+        unset($message);
     }
 
     private function proccessBodyMessage($message)
