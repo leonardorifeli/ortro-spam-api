@@ -26,6 +26,16 @@ class UserMessage
     private $providerId;
 
     /**
+     * @ORM\Column(name="user_from", type="string", length=255)
+     */
+    private $from;
+
+    /**
+     * @ORM\Column(name="user_to", type="string", length=255)
+     */
+    private $to;
+
+    /**
      * @ORM\Column(name="header_information", type="text")
      */
     private $headerInformation;
@@ -46,7 +56,7 @@ class UserMessage
     /**
      * @ORM\Column(name="is_deleted", type="boolean")
      */
-    private $isDeleted;
+    private $isDeleted = false;
 
     /**
      * @var \DateTime
@@ -75,7 +85,7 @@ class UserMessage
     /**
      * Get the value of Provider Id
      *
-     * @return int
+     * @return mixed
      */
     public function getProviderId()
     {
@@ -85,13 +95,61 @@ class UserMessage
     /**
      * Set the value of Provider Id
      *
-     * @param int providerId
+     * @param mixed providerId
      *
      * @return self
      */
     public function setProviderId($providerId)
     {
         $this->providerId = $providerId;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of From
+     *
+     * @return mixed
+     */
+    public function getFrom()
+    {
+        return $this->from;
+    }
+
+    /**
+     * Set the value of From
+     *
+     * @param mixed from
+     *
+     * @return self
+     */
+    public function setFrom($from)
+    {
+        $this->from = $from;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of To
+     *
+     * @return mixed
+     */
+    public function getTo()
+    {
+        return $this->to;
+    }
+
+    /**
+     * Set the value of To
+     *
+     * @param mixed to
+     *
+     * @return self
+     */
+    public function setTo($to)
+    {
+        $this->to = $to;
 
         return $this;
     }
