@@ -1,4 +1,2 @@
-poison-spam-police-api
+Ortro Spam API - Report
 ======================
-
-A Symfony project created on September 25, 2016, 7:25 pm.
