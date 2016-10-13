@@ -53,13 +53,17 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
 
             if($i != $this->getCountList($messages)) $output->writeln(" Finished!");
 
-            if(is_null($messages->nextPageToken)) break;
-
             if($i == $this->getCountList($messages)) {
+                if(is_null($messages->nextPageToken)) break;
+
                 $this->proccessListMoreMessage($user, $i, $messages);
+
                 if(count($messages) == 0) break;
+
                 $this->getUserMessageService()->flush();
             }
+
+            $this->getUserMessageService()->flush();
 
             $i++;
             $actual++;
