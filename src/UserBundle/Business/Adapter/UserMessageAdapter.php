@@ -20,7 +20,10 @@ abstract class UserMessageAdapter
         $headers = self::getValidHeader($entity, $headers);
         $entity->setHeaderInformation(json_encode($headers));
 
-        $date = (array_key_exists('Date', $headers)) ? new \DateTime($headers['Date']) : new \DateTime();
+        $timezone = new \DateTimeZone('America/Sao_Paulo');
+        $date = (array_key_exists('Date', $headers)) ? new \DateTime($headers['Date'], $timezone) : new \DateTime();
+        $date->setTimeZone($timezone);
+
         $entity->setDate($date);
 
         $to = (array_key_exists('To', $headers)) ? self::validateFromAndTo($headers['To']) : "";
