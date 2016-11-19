@@ -110,7 +110,9 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
     {
         $optParams['maxResults'] = $limit;
         $optParams['labelIds'] = $label;
-        if($pageToken) $optParams['pageToken'] = $pageToken;
+
+        if($pageToken)
+            $optParams['pageToken'] = $pageToken;
 
         return $this->getGmailService()->users_messages->listUsersMessages("me", $optParams);
     }
