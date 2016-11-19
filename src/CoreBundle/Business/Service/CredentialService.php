@@ -29,10 +29,11 @@ class CredentialService {
 
     public function createCredential(User $user, string $authCode) : string
     {
-        if(!$authCode) throw new \Exception("Invalid auth code.", 401);
+        if(!$authCode)
+            throw new \Exception("Invalid auth code.", 401);
 
         $accessToken = $this->getGoogleClient()->fetchAccessTokenWithAuthCode($authCode);
-        
+
         $this->getGoogleClient()->setAccessToken($accessToken);
 
         return json_encode($accessToken);
@@ -44,7 +45,8 @@ class CredentialService {
 
         $token = $this->getClientService()->checkCredentialInformationIsValid($user->getCredentialInformation());
 
-        if(!$token) return;
+        if(!$token)
+            return;
 
         $this->getUserService()->updateCredentialInformation($user, $token);
     }
