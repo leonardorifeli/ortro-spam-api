@@ -26,13 +26,12 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (php_sapi_name() != 'cli') throw new \Exception('This application must be run on the command line.');
+        if (php_sapi_name() != 'cli')
+            throw new \Exception('This application must be run on the command line.');
 
         array_map(function($user) use ($output) {
-
             $this->proccessUserCredential($user->getCredentialInformation());
             $this->proccessMessages($user, $output);
-
         }, $this->getUserService()->getAllValidUsers());
 
         $output->writeln("\n<info>Finished all!</info>");
@@ -51,14 +50,17 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
 
             $this->proccessSingleMessage($user, $messages[$i]);
 
-            if($i != $this->getCountList($messages)) $output->writeln(" Finished!");
+            if($i != $this->getCountList($messages))
+                $output->writeln(" Finished!");
 
             if($i == $this->getCountList($messages)) {
-                if(is_null($messages->nextPageToken)) break;
+                if(is_null($messages->nextPageToken))
+                    break;
 
                 $this->proccessListMoreMessage($user, $i, $messages);
 
-                if(count($messages) == 0) break;
+                if(count($messages) == 0)
+                    break;
 
                 $this->getUserMessageService()->flush();
             }
