@@ -119,7 +119,8 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
 
     private function getGmailService()
     {
-        if($this->gmailService) return $this->gmailService;
+        if($this->gmailService)
+            return $this->gmailService;
 
         $this->gmailService = new \Google_Service_Gmail($this->getClient());
 
