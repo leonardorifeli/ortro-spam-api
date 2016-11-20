@@ -9,7 +9,6 @@ use UserBundle\Business\Service\UserService;
 
 class CreateController extends Controller
 {
-
     private function getUserService() : UserService
     {
         return $this->get('user.service');
@@ -19,7 +18,6 @@ class CreateController extends Controller
     {
         try {
             $user = $this->getUserService()->createByRequest(json_decode($request->getContent()));
-
             return $this->getResponse(['user' => $user, 'isCreated' => true], 200);
         } catch (\Exception $e) {
             return $this->getResponse(['isCreated' => false, "message" => $e->getMessage()], $e->getCode());
