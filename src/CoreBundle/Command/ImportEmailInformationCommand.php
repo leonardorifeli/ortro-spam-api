@@ -15,13 +15,13 @@ use UserBundle\Business\Service\UserMessageService;
 class ImportEmailInformationCommand extends ContainerAwareCommand
 {
 
-    const LIMIT = 100;
+    const LIMIT = 200;
     private $gmailService;
     private $userCredential;
 
     protected function configure()
     {
-        $this->setName('email:import')->setDescription('Import email date informations');
+        $this->setName('email:import')->setDescription('Import email with some informations');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -41,19 +41,19 @@ class ImportEmailInformationCommand extends ContainerAwareCommand
     {
         $messages = $this->getMessages($user, self::LIMIT, "UNREAD");
 
-        $output->writeln("<info>Proccess messages of {$user->getEmail()} user...</info>");
-
         $i = 0;
         $actual = 1;
-        while($i <= $this->getCountList($messages)) {
-            if($i != $this->getCountList($messages)) $output->write("<info>Importing {$actual} message...</info>");
+        $countList = $this->getCountList($messages);
+        while($i <= $countList) {
+            if($i != $countList) 
+                $output->write("<info>Importing {$actual} message...</info>"); 
 
             $this->proccessSingleMessage($user, $messages[$i]);
 
-            if($i != $this->getCountList($messages))
+            if($i != $countList)
                 $output->writeln(" Finished!");
 
-            if($i == $this->getCountList($messages)) {
+            if($i == $countList) {
                 if(is_null($messages->nextPageToken))
                     break;
 
