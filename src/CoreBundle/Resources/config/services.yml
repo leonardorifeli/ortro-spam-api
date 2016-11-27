@@ -6,3 +6,7 @@ services:
     core.credential.service:
         class: CoreBundle\Business\Service\CredentialService
         arguments: ["@user.service","@core.client.service"]
+
+    core.proccess.classification.service:
+        class: CoreBundle\Business\Service\ProccessClassificationService
+        arguments: []
