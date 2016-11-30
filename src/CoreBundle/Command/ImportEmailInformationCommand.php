@@ -15,7 +15,7 @@ use UserBundle\Business\Service\UserMessageService;
 class ImportEmailInformationCommand extends ContainerAwareCommand
 {
 
-    const LIMIT = 200;
+    const LIMIT = 500;
     private $gmailService;
     private $userCredential;
 
