@@ -10,10 +10,12 @@ abstract class UserMessageAdapter
 
     public static final function buildHeader(UserMessage $entity, User $user, string $messageId, $headers) : UserMessage
     {
-        if(is_null($entity->getProviderId())) $entity->setProviderId($messageId);
+        if(is_null($entity->getProviderId())) 
+            $entity->setProviderId($messageId);
 
         $entity->setUser($user);
-        if(is_null($entity->getIsDeleted())) $entity->setIsDeleted(false);
+        if(is_null($entity->getIsDeleted())) 
+            $entity->setIsDeleted(false);
         $entity->setCreatedAt(new \DateTime());
         $entity->setUpdatedAt(new \DateTime());
 
@@ -47,8 +49,8 @@ abstract class UserMessageAdapter
 
         $newHeaders = [];
         foreach($headers as $header) {
-            if(!in_array($header->name, self::getValidHeaders())) continue;
-
+            if(!in_array($header->name, self::getValidHeaders())) 
+                continue;
             $newHeaders[$header->name] = $header->value;
         }
 
