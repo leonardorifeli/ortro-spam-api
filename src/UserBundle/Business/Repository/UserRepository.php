@@ -12,7 +12,6 @@ class UserRepository extends EntityRepository
         $query = $this->createQueryBuilder('u')
                     ->where('u.isActive = true')
                     ->andWhere('u.credentialInformation IS NOT NULL');
-
         return $query->getQuery()->getResult();
     }
 
