@@ -31,8 +31,8 @@ class UserCredentialService
         $this->validateTokenAndCode($accessToken, $googleCode);
 
         $user = $this->getUserService()->getUserByAccessToken($accessToken);
-        if(!$user) throw new Exception("User not found", 404);
-
+        if(!$user) 
+            throw new Exception("User not found", 404);
         $googleAccessToken = $this->getCredentialService()->createCredential($user, $googleCode);
         
         $this->updateGoogleAccessTokenByUser($user, $googleAccessToken);

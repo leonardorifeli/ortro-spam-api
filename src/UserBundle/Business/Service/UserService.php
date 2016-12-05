@@ -49,10 +49,7 @@ class UserService
     public function userExist(string $email) : bool
     {
         $user = $this->getRepository()->findOneBy(["email" => $email]);
-
-        if(!$user) return false;
-
-        return true;
+        return !$user;
     }
 
     public function getUserByAccessToken(string $accessToken)
@@ -66,9 +63,11 @@ class UserService
 
         $user = $this->getUserByEmailAndPassword($info->email, $info->password);
 
-        if(!$user) return null;
+        if(!$user) 
+            return null;
 
-        if($this->requireGoogleAuthorize($user)) return "inauthorized";
+        if($this->requireGoogleAuthorize($user)) 
+            return "inauthorized";
 
         return UserAdapter::toRequest($user);
     }
@@ -86,7 +85,6 @@ class UserService
     {
         $this->em->persist($entity);
         $this->em->flush();
-
         return $entity;
     }
 
@@ -97,9 +95,7 @@ class UserService
 
     private function requireGoogleAuthorize(User $user) : bool
     {
-        if($user->getCredentialInformation()) return false;
-
-        return true;
+        return is_null($user->getCredentialInformation()) || $user->getCredentialInformation() == "";
     }
 
     private function validate($info)
