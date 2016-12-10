@@ -2,6 +2,6 @@
 
 namespace CoreBundle\Business\Interfaces;
 
-class ProccessClassificationInterface {
+interface ProccessClassificationInterface {
     
 }
