@@ -2,6 +2,8 @@
 
 namespace CoreBundle\Business\Service;
 
-class ProccessClassificationService {
+use CoreBundle\Business\Interfaces\ProccessClassificationInterface;
+
+class ProccessClassificationService implements ProccessClassificationInterface {
     
 }
