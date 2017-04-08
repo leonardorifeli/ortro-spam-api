@@ -48,8 +48,7 @@ class UserService
 
     public function userExist(string $email) : bool
     {
-        $user = $this->getRepository()->findOneBy(["email" => $email]);
-        return !is_null($user);
+        return !is_null($this->getRepository()->findOneBy(["email" => $email]));
     }
 
     public function getUserByAccessToken(string $accessToken)
