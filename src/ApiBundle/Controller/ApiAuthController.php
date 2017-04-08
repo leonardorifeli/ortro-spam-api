@@ -17,9 +17,8 @@ class ApiAuthController extends Controller
     {
         $url = $this->getCredentialService()->getAuthUrl();
 
-        if(!$this->getCredentialService()->credentialExist() || !$request->get('code')) {
+        if(!$this->getCredentialService()->credentialExist() || !$request->get('code'))
             return $this->redirect($url);
-        }
 
         $oauthCode = $request->get('code');
 
