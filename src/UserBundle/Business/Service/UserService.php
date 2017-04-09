@@ -62,7 +62,7 @@ class UserService
 
         $user = $this->getUserByEmailAndPassword($info->email, $info->password);
 
-        if(!$user) 
+        if(!$user)
             return null;
 
         if($this->requireGoogleAuthorize($user)) 
@@ -73,9 +73,13 @@ class UserService
 
     public function getUserByEmailAndPassword(string $email, string $password)
     {
-        $user = $this->getRepository()->findOneBy(["email" => $email, "password" => UserAdapter::encriptPassword($password)]);
+        $user = $this->getRepository()->findOneBy([
+            "email" => $email,
+            "password" => UserAdapter::encriptPassword($password)
+        ]);
 
-        if(!$user) return null;
+        if(!$user) 
+            return null;
 
         return $user;
     }
